@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LoxLanguage")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bc36c06e1556f31f3b0d5dcaf6e6361a80781653")]
 [assembly: System.Reflection.AssemblyProductAttribute("LoxLanguage")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LoxLanguage")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
