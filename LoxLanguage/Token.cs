@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace LoxLanguage
 {
-    internal class Token
+    public class Token
     {
-        TokenType type;
-        string lexeme;
-        Object literal;
-        int line;
+        public TokenType type;
+        public string lexeme;
+        public Object literal;
+        public int line;
 
         public Token(TokenType type, string lexeme, Object literal, int line)
         {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LoxLanguage
 {
-    enum TokenType
+    public enum TokenType
     {
         //单字符Token
         Left_Paren,     // ( 

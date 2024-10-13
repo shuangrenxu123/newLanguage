@@ -5,18 +5,31 @@
         static bool hadError = false;
         static void Main(string[] args)
         {
-            if(args.Length > 1)
-            {
-                Console.WriteLine("Usage:los [scrpit]");
-            }
-            else if(args.Length ==1)
-            {
-                RunFile(args[0]);
-            }
-            else
-            {
-                RunPrompt();
-            }
+            TestTree();
+            //if(args.Length > 1)
+            //{
+            //    Console.WriteLine("Usage:los [scrpit]");
+            //}
+            //else if(args.Length ==1)
+            //{
+            //    RunFile(args[0]);
+            //}
+            //else
+            //{
+            //    RunPrompt();
+            //}
+        }
+
+        static void TestTree()
+        {
+           var expr = new Binary(
+               new Unary(new Token(TokenType.Minus,"-",null,1)
+                        ,new Literal(123)),
+               new Token(TokenType.Star,"*",null,1),
+               new Grouping(new Literal(45.67))
+           );
+
+            Console.WriteLine((new LoxPrint()).Debug(expr));
         }
 
         static void RunFile(string path)
