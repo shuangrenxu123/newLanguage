@@ -4,20 +4,20 @@
     {
         static bool hadError = false;
         static void Main(string[] args)
-        {
-            TestTree();
-            //if(args.Length > 1)
-            //{
-            //    Console.WriteLine("Usage:los [scrpit]");
-            //}
-            //else if(args.Length ==1)
-            //{
-            //    RunFile(args[0]);
-            //}
-            //else
-            //{
-            //    RunPrompt();
-            //}
+        {     
+            //TestTree();
+            if(args.Length > 1)
+            {
+                Console.WriteLine("Usage:los [scrpit]");
+            }
+            else if(args.Length ==1)
+            {
+                RunFile(args[0]);
+            }
+            else
+            {
+                RunPrompt();
+            }
         }
 
         static void TestTree()
@@ -64,11 +64,10 @@
         {
             Scanner scanner = new(source);
             List<Token> tokens = scanner.scanTokens();
+            var parser = new Parser(tokens);
+            var root = parser.Parse();
 
-            foreach (Token token in tokens)
-            {
-                Console.WriteLine(token);
-            }    
+            Console.WriteLine((new LoxPrint()).Debug(root));
         }
 
         public static void Error(int line,string message)
