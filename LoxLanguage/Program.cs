@@ -3,8 +3,11 @@
     internal class Program
     {
         static bool hadError = false;
+        public static bool hasRuntimeError = false;
+        private static Interpreter interpreter = new();
         static void Main(string[] args)
         {     
+
             //TestTree();
             if(args.Length > 1)
             {
@@ -22,12 +25,12 @@
 
         static void TestTree()
         {
-           var expr = new Binary(
-               new Unary(new Token(TokenType.Minus,"-",null,1)
-                        ,new Literal(123)),
-               new Token(TokenType.Star,"*",null,1),
-               new Grouping(new Literal(45.67))
-           );
+             var expr = new Binary(
+                 new Unary(new Token(TokenType.Minus,"-",null,1)
+                          ,new Literal(123)),
+                 new Token(TokenType.Star,"*",null,1),
+                 new Grouping(new Literal(45.67))
+             );
 
             Console.WriteLine((new LoxPrint()).Debug(expr));
         }
@@ -38,7 +41,11 @@
             Run(strings);
             if (hadError)
             {
-                throw new Exception("代码执行有错误");
+                Environment.Exit(65);
+            }
+            if(hasRuntimeError)
+            {
+                Environment.Exit(70);
             }
         }
 
@@ -67,12 +74,13 @@
             var parser = new Parser(tokens);
             var root = parser.Parse();
 
-            Console.WriteLine((new LoxPrint()).Debug(root));
+            interpreter.Interpret(root);
+            //Console.WriteLine((new LoxPrint()).Debug(root));
         }
 
         public static void Error(int line,string message)
         {
-
+            Console.WriteLine($"在行数：[{line}] 行出现了错误{message}");
         }
         private static void Report(int line,string where,string message)
         {

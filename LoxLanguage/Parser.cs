@@ -178,7 +178,7 @@ namespace LoxLanguage
                 TokenType.False => new Literal(false),
                 TokenType.True => new Literal(true),
                 TokenType.Nil => new Literal(null),
-                TokenType.Number | TokenType.Strings => new Literal(Previous().literal),
+                TokenType.Number or TokenType.Strings => new Literal(Previous().literal),
                 _ => null
             };
 
@@ -205,7 +205,10 @@ namespace LoxLanguage
             {
                 Advance();
             }
-            Program.Error(-1,errMessage);
+            else
+            {
+                Program.Error(Peek().line,errMessage);
+            }
         }
     }
 }

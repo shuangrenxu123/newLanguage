@@ -184,7 +184,7 @@ namespace LoxLanguage
                     Advance();
                 }
             }
-            AddToken(TokenType.Number,source.Substring(start,current-start));
+            AddToken(TokenType.Number,float.Parse(source.Substring(start,current-start)));
         }
        
         /// <summary>
