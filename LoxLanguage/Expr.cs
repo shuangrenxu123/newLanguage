@@ -1,5 +1,8 @@
 
 namespace LoxLanguage;
+/// <summary>
+/// Expression 表达式基类，规定了表达式如何规约
+/// </summary>
 public abstract class Expr
 {
     public interface IVisitor<T>

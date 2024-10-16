@@ -14,6 +14,10 @@ namespace LoxLanguage
         /// </summary>
         private int current = 0;
         private bool isEnd => tokens[current].type == TokenType.EOF;
+        /// <summary>
+        /// 解析语句
+        /// </summary>
+        /// <returns></returns>
         private Expr Expression()
         {
             return Equality();
