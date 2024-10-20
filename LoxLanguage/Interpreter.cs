@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace LoxLanguage
 {
+
+    /// <summary>
+    /// 解释器
+    /// </summary>
     internal class Interpreter : Stmt.IVisitor<Unit>,Expr.IVisitor<Object>
     {
 
@@ -199,6 +203,43 @@ namespace LoxLanguage
         public object VisitVariableExpr(Variable expr)
         {
             return environment.GetVariables(expr.name);
+        }
+
+        /// <summary>
+        /// 赋值语句的执行
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        public object VisitAssignExpr(Assign expr)
+        {
+            object value = Evaluate(expr.right);
+            environment.Assign(expr.name,value);
+            //将最右侧的值传递过去
+            return value;
+        }
+
+        public Unit VisitBlockStmt(Block stmt)
+        {
+            ExecuteBlock(stmt.statements,new Environment(environment));
+            return null;
+        }
+        private void ExecuteBlock(List<Stmt> statements,Environment environment)
+        {
+            Environment previous = this.environment;
+            try
+            {
+                //新的子环境
+                this.environment = environment;
+                foreach (Stmt stmt in statements)
+                {
+                    Execute(stmt);
+                }
+            }
+            finally
+            {
+                //恢复环境
+                this.environment = previous;
+            }
         }
     } 
 }

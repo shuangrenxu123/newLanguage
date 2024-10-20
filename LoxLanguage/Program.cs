@@ -21,19 +21,7 @@
             //{
             //    RunPrompt();
             //}
-        }
-
-        static void TestTree()
-        {
-             var expr = new Binary(
-                 new Unary(new Token(TokenType.Minus,"-",null,1)
-                          ,new Literal(123)),
-                 new Token(TokenType.Star,"*",null,1),
-                 new Grouping(new Literal(45.67))
-             );
-
-            Console.WriteLine((new LoxPrint()).Debug(expr));
-        }
+         }
 
         static void RunFile(string path)
         {
@@ -80,7 +68,7 @@
 
         public static void Error(int line,string message)
         {
-            Console.WriteLine($"在行数：[{line}] 行出现了错误{message}");
+            Console.WriteLine($"在行数：[{line}] 行出现了错误 : {message}");
         }
         private static void Report(int line,string where,string message)
         {

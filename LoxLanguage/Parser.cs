@@ -20,9 +20,13 @@ namespace LoxLanguage
         /// <returns></returns>
         private Expr Expression()
         {
-            return Equality();
+            return Assigment();
         }
 
+        /// <summary>
+        /// 检测变量声明语句
+        /// </summary>
+        /// <returns></returns>
         private Stmt Declaration()
         {
             try
@@ -61,7 +65,7 @@ namespace LoxLanguage
             List<Stmt> statements = new List<Stmt>();
             while (!isEnd)
             {
-                statements.Add(Statement());
+                statements.Add(Declaration());
             }
             return statements;
         }
@@ -70,6 +74,10 @@ namespace LoxLanguage
             if (Match(TokenType.Print))
             {
                 return PrintStatement();
+            }
+            if (Match(TokenType.Left_Brace))
+            {
+                return new Block(Block());
             }
             if (Match(TokenType.Var))
             {
@@ -239,6 +247,11 @@ namespace LoxLanguage
                 _ => null
             };
 
+            if(token.type == TokenType.Identifier)
+            {
+                return new Variable(token);
+            }
+
             if(token.type == TokenType.Left_Paren)
             {
                 Expr expr = Expression();
@@ -268,5 +281,45 @@ namespace LoxLanguage
                 return null;
             }
         }
+
+        private Expr Assigment()
+        {
+            ///拿到左侧表达式结果, 由于赋值语句的优先级比判断还低，
+            ///所以我们先来执行检测赋值
+            ///这里是拿到了左侧的表达式树，如果没有后续，那就返回。
+            Expr left = Equality();
+
+            if (Match(TokenType.Equal))
+            {
+                Token equals = Previous();
+                //形成一个赋值的语法树
+                Expr value = Assigment();
+
+                if(left is Variable)
+                {
+                    Variable? variable = (left as Variable);
+                    Token name = variable.name;
+                    return new Assign(name, value);
+                }
+                Program.Error(equals.line,"错误的赋值目标");
+            }
+
+
+            return left;
+        }
+    
+        public List<Stmt> Block()
+        {
+            List<Stmt> result = new();
+            //匹配后括号
+            while(!CheckCurrentTokenType(TokenType.Right_Brace) && !isEnd)
+            {
+                result.Add(Declaration());
+            }
+            Consume(TokenType.Right_Brace, "没有检测到后括号 }");
+            return result;
+
+        }
+        
     }
 }

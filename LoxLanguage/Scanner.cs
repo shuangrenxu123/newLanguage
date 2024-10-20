@@ -71,7 +71,7 @@ namespace LoxLanguage
                     AddToken(TokenType.Left_Brace);
                     break;
                 case '}':
-                    AddToken(TokenType.Left_Paren);
+                    AddToken(TokenType.Right_Brace);
                     break;
                 case ',':
                     AddToken(TokenType.Comma);
@@ -118,7 +118,7 @@ namespace LoxLanguage
                         AddToken(TokenType.Slash);
                     }
                     break;
-
+                // 或许我们可以在之前就剔除所有的空格与特殊字符
                 case ' ':
                 case '\r':
                 case '\t':
