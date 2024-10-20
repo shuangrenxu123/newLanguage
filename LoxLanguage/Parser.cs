@@ -23,24 +23,6 @@ namespace LoxLanguage
             return Assigment();
         }
 
-        /// <summary>
-        /// 检测变量声明语句
-        /// </summary>
-        /// <returns></returns>
-        private Stmt Declaration()
-        {
-            try
-            {
-                if (Match(TokenType.Var))
-                {
-                    return VarDeclaration();
-                }
-                return Statement();
-            } catch (Exception e) {
-                
-                return null;
-            }
-        }
 
         private Stmt VarDeclaration()
         {
@@ -69,6 +51,27 @@ namespace LoxLanguage
             }
             return statements;
         }
+
+        /// <summary>
+        /// 检测变量声明语句
+        /// </summary>
+        /// <returns></returns>
+        private Stmt Declaration()
+        {
+            try
+            {
+                if (Match(TokenType.Var))
+                {
+                    return VarDeclaration();
+                }
+                return Statement();
+            }
+            catch (Exception e)
+            {
+
+                return null;
+            }
+        }
         Stmt Statement()
         {
             if (Match(TokenType.Print))
@@ -78,10 +81,6 @@ namespace LoxLanguage
             if (Match(TokenType.Left_Brace))
             {
                 return new Block(Block());
-            }
-            if (Match(TokenType.Var))
-            {
-                return VarDeclaration();
             }
             return ExpressionStatement();
         }
@@ -94,7 +93,7 @@ namespace LoxLanguage
         Stmt ExpressionStatement()
         {
             Expr expr = Expression();
-            Consume(TokenType.Semicolon, "Expect ';' after expression.");
+            Consume(TokenType.Semicolon, "没有分号结尾");
             return new Expression(expr);
         }
 

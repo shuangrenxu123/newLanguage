@@ -190,7 +190,7 @@ namespace LoxLanguage
 
         public Unit VisitVarStmt(Var stmt)
         {
-            object value =null;
+            object value = null;
             if (stmt.initializer != null)
             {
                 value = Evaluate(stmt.initializer);
@@ -199,7 +199,11 @@ namespace LoxLanguage
                 environment.Define(stmt.name.lexeme,value);
                 return null;
         }
-
+        /// <summary>
+        /// 变量表达式
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
         public object VisitVariableExpr(Variable expr)
         {
             return environment.GetVariables(expr.name);
