@@ -1,8 +1,4 @@
-
 namespace LoxLanguage;
-/// <summary>
-/// Expression 表达式基类，规定了表达式如何规约
-/// </summary>
 public abstract class Expr
 {
     public interface IVisitor<T>
@@ -11,6 +7,7 @@ public abstract class Expr
         public T VisitGroupingExpr(Grouping expr);
         public T VisitLiteralExpr(Literal expr);
         public T VisitUnaryExpr(Unary expr);
+        public T VisitVariableExpr(Variable expr);
     }
 
     public abstract T Accept<T>(IVisitor<T> visitor);
@@ -71,6 +68,19 @@ public class Unary : Expr
     public override T Accept<T>(IVisitor<T> visitor)
     {
         return visitor.VisitUnaryExpr(this);
+    }
+}
+public class Variable : Expr
+{
+    public Token name;
+    public Variable(Token name)
+    {
+        this.name = name;
+    }
+
+    public override T Accept<T>(IVisitor<T> visitor)
+    {
+        return visitor.VisitVariableExpr(this);
     }
 }
 

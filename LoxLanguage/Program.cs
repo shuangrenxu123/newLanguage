@@ -6,21 +6,21 @@
         public static bool hasRuntimeError = false;
         private static Interpreter interpreter = new();
         static void Main(string[] args)
-        {     
-
+        {
+            RunFile("C:\\Users\\Lenovo\\Desktop\\test.lox");
             //TestTree();
-            if(args.Length > 1)
-            {
-                Console.WriteLine("Usage:los [scrpit]");
-            }
-            else if(args.Length ==1)
-            {
-                RunFile(args[0]);
-            }
-            else
-            {
-                RunPrompt();
-            }
+            //if(args.Length > 1)
+            //{
+            //    Console.WriteLine("Usage:los [scrpit]");
+            //}
+            //else if(args.Length ==1)
+            //{
+            //    RunFile(args[0]);
+            //}
+            //else
+            //{
+            //    RunPrompt();
+            //}
         }
 
         static void TestTree()
@@ -41,11 +41,11 @@
             Run(strings);
             if (hadError)
             {
-                Environment.Exit(65);
+                System.Environment.Exit(65);
             }
             if(hasRuntimeError)
             {
-                Environment.Exit(70);
+                System.Environment.Exit(70);
             }
         }
 
@@ -72,9 +72,9 @@
             Scanner scanner = new(source);
             List<Token> tokens = scanner.scanTokens();
             var parser = new Parser(tokens);
-            var root = parser.Parse();
+            var statements = parser.Parse();
 
-            interpreter.Interpret(root);
+            interpreter.Interpret(statements);
             //Console.WriteLine((new LoxPrint()).Debug(root));
         }
 

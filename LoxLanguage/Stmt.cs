@@ -5,6 +5,7 @@ public abstract class Stmt
     {
         public T VisitExpressionStmt(Expression stmt);
         public T VisitPrintStmt(Print stmt);
+        public T VisitVarStmt(Var stmt);
     }
 
     public abstract T Accept<T>(IVisitor<T> visitor);
@@ -22,9 +23,6 @@ public class Expression : Stmt
         return visitor.VisitExpressionStmt(this);
     }
 }
-/// <summary>
-/// 理论说Print并不是一表达式，这里只是为了提前看到效果才这样写的
-/// </summary>
 public class Print : Stmt
 {
     public Expr expression;
@@ -36,6 +34,21 @@ public class Print : Stmt
     public override T Accept<T>(IVisitor<T> visitor)
     {
         return visitor.VisitPrintStmt(this);
+    }
+}
+public class Var : Stmt
+{
+    public Token name;
+    public Expr initializer;
+    public Var(Token name, Expr initializer)
+    {
+        this.name = name;
+        this.initializer = initializer;
+    }
+
+    public override T Accept<T>(IVisitor<T> visitor)
+    {
+        return visitor.VisitVarStmt(this);
     }
 }
 

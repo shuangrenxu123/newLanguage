@@ -22,21 +22,74 @@ namespace LoxLanguage
         {
             return Equality();
         }
+
+        private Stmt Declaration()
+        {
+            try
+            {
+                if (Match(TokenType.Var))
+                {
+                    return VarDeclaration();
+                }
+                return Statement();
+            } catch (Exception e) {
+                
+                return null;
+            }
+        }
+
+        private Stmt VarDeclaration()
+        {
+            Token name = Consume(TokenType.Identifier,"变量名不是一个合法的标识符");
+            
+            //赋值符号左边的 表达式
+            Expr initExpr = null;
+            if (Match(TokenType.Equal))
+            {
+                initExpr = Expression();
+            }
+            Consume(TokenType.Semicolon,"语句没有通过 ； 结尾");
+            return new Var(name, initExpr);
+        }
+
         public Parser(List<Token> tokens)
         {
             this.tokens = tokens;
         }
-        public Expr Parse()
+        public List<Stmt> Parse()
         {
-            try
+            List<Stmt> statements = new List<Stmt>();
+            while (!isEnd)
             {
-                return Expression();
+                statements.Add(Statement());
             }
-            catch (Exception e)
-            {
-                return null;
-            }
+            return statements;
         }
+        Stmt Statement()
+        {
+            if (Match(TokenType.Print))
+            {
+                return PrintStatement();
+            }
+            if (Match(TokenType.Var))
+            {
+                return VarDeclaration();
+            }
+            return ExpressionStatement();
+        }
+        Stmt PrintStatement()
+        {
+            Expr value = Expression();
+            Consume(TokenType.Semicolon,"没有分号结尾");
+            return new Print(value);
+        }
+        Stmt ExpressionStatement()
+        {
+            Expr expr = Expression();
+            Consume(TokenType.Semicolon, "Expect ';' after expression.");
+            return new Expression(expr);
+        }
+
         /// <summary>
         /// 取出并推进一个Token
         /// </summary>
@@ -194,7 +247,7 @@ namespace LoxLanguage
             }
             if(result == null)
             {
-                Program.Error(-1, "识别到未知的类型:"+ token.type);
+                Program.Error(token.line, "识别到未知的类型:"+ token.type);
             }
             return result;
         }
@@ -203,15 +256,16 @@ namespace LoxLanguage
         /// </summary>
         /// <param name="type"></param>
         /// <param name="errMessage"></param>
-        private void Consume(TokenType type,string errMessage)
+        private Token Consume(TokenType type,string errMessage)
         {
             if (CheckCurrentTokenType(type))
             {
-                Advance();
+                return Advance();
             }
             else
             {
                 Program.Error(Peek().line,errMessage);
+                return null;
             }
         }
     }

@@ -7,14 +7,18 @@ using System.Threading.Tasks;
 
 namespace LoxLanguage
 {
-    internal class Interpreter : Expr.IVisitor<Object>
+    internal class Interpreter : Stmt.IVisitor<Unit>,Expr.IVisitor<Object>
     {
-        public void Interpret(Expr expr)
+
+        private Environment environment = new();
+        public void Interpret(List<Stmt> statements)
         {
             try
             {
-                object value = Evaluate(expr);
-                Console.WriteLine(value.ToString());
+                foreach (Stmt stmt in statements)
+                {
+                    Execute(stmt);
+                }
             }
             catch (RuntimeError ex)
             {
@@ -23,7 +27,14 @@ namespace LoxLanguage
             }
 
         }
-
+        /// <summary>
+        /// 执行语句
+        /// </summary>
+        /// <param name="stmt"></param>
+        private void Execute(Stmt stmt)
+        {
+            stmt.Accept(this);
+        }
 
         public object VisitBinaryExpr(Binary expr)
         {
@@ -158,6 +169,36 @@ namespace LoxLanguage
         private Object Evaluate(Expr expr)
         {
             return expr.Accept(this);
+        }
+
+        public Unit VisitExpressionStmt(Expression stmt)
+        {
+            Evaluate(stmt.expression);
+            return null;
+        }
+
+        public Unit VisitPrintStmt(Print stmt)
+        {
+            Object value = Evaluate(stmt.expression);
+            Console.WriteLine(value);
+            return null;
+        }
+
+        public Unit VisitVarStmt(Var stmt)
+        {
+            object value =null;
+            if (stmt.initializer != null)
+            {
+                value = Evaluate(stmt.initializer);
+            }
+
+                environment.Define(stmt.name.lexeme,value);
+                return null;
+        }
+
+        public object VisitVariableExpr(Variable expr)
+        {
+            return environment.GetVariables(expr.name);
         }
     } 
 }

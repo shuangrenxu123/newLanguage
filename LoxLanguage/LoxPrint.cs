@@ -67,5 +67,9 @@ namespace LoxLanguage
             return stringBuilder.ToString();
         }
 
+        public string VisitVariableExpr(Variable expr)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

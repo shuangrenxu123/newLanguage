@@ -154,7 +154,7 @@ namespace LoxLanguage
         {
             while (IsAlphaNumeric(Peek()))
                 Advance();
-            string text = source.Substring(start,current);
+            string text = source.Substring(start,current- start);
      
             if(!keywords.TryGetValue(text,out var type))
             {
