@@ -23,14 +23,14 @@ namespace LoxLanguage
             this.source = source;
             keywords = new()
             {
-                { "and", TokenType.And },
                 { "class", TokenType.Class },
                 { "else", TokenType.Else },
                 { "false", TokenType.False },
                 { "true", TokenType.True },
                 { "for", TokenType.For },
                 { "if", TokenType.If },
-                { "or", TokenType.Or },
+                { "||", TokenType.Or },
+                { "&&",TokenType.And},
                 { "nil", TokenType.Nil },
                 { "return", TokenType.Return },
                 { "this", TokenType.This },
@@ -103,7 +103,6 @@ namespace LoxLanguage
                 case '>':
                     AddToken(Match('=') ? TokenType.Greater_Equal : TokenType.Greater);
                     break;
-
                 case '/':
                     if (Match('/'))
                     {
@@ -137,6 +136,14 @@ namespace LoxLanguage
                     }else if (IsAlpha(c))
                     {
                         Identfier();
+                    }
+                    else if(c=='&' && Match('&'))
+                    {
+                        AddToken(TokenType.And);
+                    }
+                    else if(c=='|' &&Match('|'))
+                    {
+                        AddToken(TokenType.Or);
                     }
                     else
                     {
