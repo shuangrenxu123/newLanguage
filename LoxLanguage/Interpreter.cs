@@ -11,7 +11,7 @@ namespace LoxLanguage
     /// <summary>
     /// 解释器
     /// </summary>
-    internal class Interpreter : Stmt.IVisitor<Unit>,Expr.IVisitor<Object>
+    internal class Interpreter : Stmt.IVisitor<Unit>, Expr.IVisitor<Object>
     {
 
         private Environment environment = new();
@@ -154,6 +154,11 @@ namespace LoxLanguage
             return left.Equals(right);
         }
 
+        /// <summary>
+        /// 判断值的bool值
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         private bool IsTruthy(object value)
         {
             if (value == null)
@@ -244,6 +249,35 @@ namespace LoxLanguage
                 //恢复环境
                 this.environment = previous;
             }
+        }
+
+        public Unit VisitIfStmt(If stmt)
+        {
+            if (IsTruthy(Evaluate(stmt.condition)))
+            {
+                Execute(stmt.thenBranch);
+            }
+            else if(stmt.elseBranch!=null)
+            {
+                Execute(stmt.elseBranch);
+            }
+            return null; 
+        }
+
+        public object VisitLogicalExpr(Logical expr)
+        {
+            object left = Evaluate(expr.left);
+            if(expr.opt.type == TokenType.Or)
+            {
+                if (IsTruthy(left))
+                    return left;
+            }
+            else
+            {
+                if (!IsTruthy(left))
+                    return left;
+            }
+            return Evaluate(expr.right);
         }
     } 
 }

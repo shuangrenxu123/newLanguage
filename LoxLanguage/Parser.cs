@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -74,6 +75,11 @@ namespace LoxLanguage
         }
         Stmt Statement()
         {
+
+            if (Match(TokenType.If))
+            {
+                return IfStatement();
+            }
             if (Match(TokenType.Print))
             {
                 return PrintStatement();
@@ -84,6 +90,22 @@ namespace LoxLanguage
             }
             return ExpressionStatement();
         }
+
+        private Stmt IfStatement()
+        {
+            Consume(TokenType.Left_Paren, "if关键字后面必须接上左括号");
+            Expr condition = Expression();
+            Consume(TokenType.Right_Paren, "if后面必须接后括号");
+
+            Stmt thenBranch = Statement();
+            Stmt? elseBranch = null;
+            if (Match(TokenType.Else))
+            {
+                elseBranch = Statement();
+            }
+            return new If(condition,thenBranch,elseBranch);
+        }
+
         Stmt PrintStatement()
         {
             Expr value = Expression();
@@ -286,8 +308,8 @@ namespace LoxLanguage
             ///拿到左侧表达式结果, 由于赋值语句的优先级比判断还低，
             ///所以我们先来执行检测赋值
             ///这里是拿到了左侧的表达式树，如果没有后续，那就返回。
-            Expr left = Equality();
-
+            //Expr left = Equality();
+            Expr left = Or(); 
             if (Match(TokenType.Equal))
             {
                 Token equals = Previous();
@@ -306,7 +328,29 @@ namespace LoxLanguage
 
             return left;
         }
-    
+
+        private Expr Or()
+        {
+            Expr left = And();
+            while (Match(TokenType.Or))
+            {
+                Token opt = Previous();
+                Expr right = And();
+                left = new Logical(left,opt,right);
+            }
+            return left;
+        }
+        private Expr And()
+        {
+            Expr left = Equality();
+            while (Match(TokenType.And))
+            {
+                Token opt = Previous();
+                Expr right = Equality();
+                left = new Logical(left,opt,right);
+            }
+            return left;
+        }
         public List<Stmt> Block()
         {
             List<Stmt> result = new();

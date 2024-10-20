@@ -5,6 +5,7 @@ public abstract class Stmt
     {
         public T VisitExpressionStmt(Expression stmt);
         public T VisitPrintStmt(Print stmt);
+        public T VisitIfStmt(If stmt);
         public T VisitVarStmt(Var stmt);
         public T VisitBlockStmt(Block stmt);
     }
@@ -35,6 +36,23 @@ public class Print : Stmt
     public override T Accept<T>(IVisitor<T> visitor)
     {
         return visitor.VisitPrintStmt(this);
+    }
+}
+public class If : Stmt
+{
+    public Expr condition;
+    public Stmt thenBranch;
+    public Stmt elseBranch;
+    public If(Expr condition, Stmt thenBranch, Stmt elseBranch)
+    {
+        this.condition = condition;
+        this.thenBranch = thenBranch;
+        this.elseBranch = elseBranch;
+    }
+
+    public override T Accept<T>(IVisitor<T> visitor)
+    {
+        return visitor.VisitIfStmt(this);
     }
 }
 public class Var : Stmt
