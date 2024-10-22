@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LoxLanguage
 {
@@ -84,11 +85,77 @@ namespace LoxLanguage
             {
                 return PrintStatement();
             }
+            if (Match(TokenType.While))
+            {
+                return WhileStatement();
+            }
+            if (Match(TokenType.For))
+            {
+                return ForStatement();
+            }
             if (Match(TokenType.Left_Brace))
             {
                 return new Block(Block());
             }
             return ExpressionStatement();
+        }
+
+        private Stmt ForStatement()
+        {
+            Consume(TokenType.Left_Paren, "For语句后必须加上(");
+            Stmt initExpr;
+            if (Match(TokenType.Semicolon))
+            {
+                initExpr = null;
+            }
+            else if (Match(TokenType.Var))
+            {
+                initExpr = VarDeclaration();
+            }
+            else
+            {
+                initExpr = ExpressionStatement();
+            }
+            // 新增部分开始
+            Expr condition = null;
+            if (!CheckCurrentTokenType(TokenType.Semicolon))
+            {
+                condition = Expression();
+            }
+            Consume(TokenType.Semicolon, "For条件判断表达式需要以；结尾");
+
+            Expr updateExpr = null;
+            if (!CheckCurrentTokenType(TokenType.Right_Paren))
+            {
+                updateExpr = Expression();
+            }
+            Consume(TokenType.Right_Paren, "For语句后必须加上)");
+
+            Stmt body = Statement();
+            if (updateExpr != null)
+            {
+                body = new Block(new List<Stmt>() {body,new Expression(updateExpr) });
+            }
+            if (condition == null) 
+                condition = new Literal(true);
+            body = new While(condition, body);
+
+            if (initExpr != null)
+            {
+                body = new Block ( new List<Stmt>() {initExpr,body } );
+            }
+            return body;
+        }
+
+        private While WhileStatement()
+        {
+            Consume(TokenType.Left_Paren,"while关键字后必须加上（");
+            var condition = Expression();
+            Consume(TokenType.Right_Paren, "whild条件后必须跟上）");
+            //获得执行体，不一定是由大括号组成的
+            Stmt body = Statement();
+
+            return new While(condition,body);
         }
 
         private Stmt IfStatement()
@@ -112,6 +179,10 @@ namespace LoxLanguage
             Consume(TokenType.Semicolon,"没有分号结尾");
             return new Print(value);
         }
+        /// <summary>
+        /// 获得一个普通语句
+        /// </summary>
+        /// <returns></returns>
         Stmt ExpressionStatement()
         {
             Expr expr = Expression();

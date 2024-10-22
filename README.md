@@ -10,12 +10,4 @@
 ```
 var a = 1;
 ```
-3. 不同作用域的变量声明，如下
-``` c
-var a =1; // 1
-{
-    var a = 2;
-    print a; //2
-}
-print a;// 1
-```
+3. 基础的控制流，for循环，while循环，if语句。但目前不支持break与Continue

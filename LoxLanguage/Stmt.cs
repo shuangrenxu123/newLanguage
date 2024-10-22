@@ -7,6 +7,7 @@ public abstract class Stmt
         public T VisitPrintStmt(Print stmt);
         public T VisitIfStmt(If stmt);
         public T VisitVarStmt(Var stmt);
+        public T VisitWhileStmt(While stmt);
         public T VisitBlockStmt(Block stmt);
     }
 
@@ -68,6 +69,21 @@ public class Var : Stmt
     public override T Accept<T>(IVisitor<T> visitor)
     {
         return visitor.VisitVarStmt(this);
+    }
+}
+public class While : Stmt
+{
+    public Expr condition;
+    public Stmt body;
+    public While(Expr condition,Stmt body)
+    {
+        this.condition = condition;
+        this.body = body;
+    }
+
+    public override T Accept<T>(IVisitor<T> visitor)
+    {
+        return visitor.VisitWhileStmt(this);
     }
 }
 public class Block : Stmt

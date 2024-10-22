@@ -279,5 +279,15 @@ namespace LoxLanguage
             }
             return Evaluate(expr.right);
         }
+
+        public Unit VisitWhileStmt(While stmt)
+        {
+            while (IsTruthy(Evaluate(stmt.condition)))
+            {
+                Execute(stmt.body);
+            }
+            
+            return null;
+        }
     } 
 }
