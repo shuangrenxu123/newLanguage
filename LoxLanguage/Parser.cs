@@ -62,6 +62,10 @@ namespace LoxLanguage
         {
             try
             {
+                if (Match(TokenType.Fun))
+                {
+                    return Function();
+                }
                 if (Match(TokenType.Var))
                 {
                     return VarDeclaration();
@@ -74,6 +78,30 @@ namespace LoxLanguage
                 return null;
             }
         }
+
+       /// <summary>
+       /// 识别函数的定义
+       /// </summary>
+       /// <returns></returns>
+        private Stmt Function()
+        {
+            Token name = Consume(TokenType.Identifier, "没有申明函数名");
+
+            Consume(TokenType.Left_Paren, "函数后缺少（");
+            List<Token> parameters = new();
+            if (!CheckCurrentTokenType(TokenType.Right_Paren))
+            {
+                do
+                {
+                    parameters.Add(Consume(TokenType.Identifier, "参数必须为标识符"));
+                } while (Match(TokenType.Comma));
+            }
+            Consume(TokenType.Right_Paren, "函数定义后必须加上）");
+            Consume(TokenType.Left_Brace, "函数定义后必须加上{");
+            List<Stmt> block = Block();
+            return new Function(name, parameters, block);
+        }
+
         Stmt Statement()
         {
 
@@ -319,9 +347,45 @@ namespace LoxLanguage
                 Expr right = Unary();
                 return new Unary(opt,right);
             }
-            return Primary();
+            return Call();
+        }
+        private Expr Call()
+        {
+            Expr expr = Primary();
+            while (true)
+            {
+                if (Match(TokenType.Left_Paren))
+                {
+                    expr = FinishCall(expr);
+                }
+                else
+                {
+                    break;  
+                }
+            }
+            return expr;
         }
 
+        /// <summary>
+        /// 返回包装后的版本
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        Expr FinishCall(Expr call)
+        {
+           List<Expr> args = new List<Expr>();
+            if (!CheckCurrentTokenType(TokenType.Right_Paren))
+            {
+                do
+                {
+                    args.Add(Expression());
+                }
+                while (Match(TokenType.Comma)); 
+            }
+
+            Token paren =Consume(TokenType.Right_Paren,"函数调用需要右括号结尾");
+            return new Call(call,paren,args);
+        }
         /// <summary>
         /// 最终值
         /// </summary>

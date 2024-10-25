@@ -6,6 +6,7 @@ public abstract class Stmt
         public T VisitExpressionStmt(Expression stmt);
         public T VisitPrintStmt(Print stmt);
         public T VisitIfStmt(If stmt);
+        public T VisitFunctionStmt(Function stmt);
         public T VisitVarStmt(Var stmt);
         public T VisitWhileStmt(While stmt);
         public T VisitBlockStmt(Block stmt);
@@ -56,6 +57,23 @@ public class If : Stmt
         return visitor.VisitIfStmt(this);
     }
 }
+public class Function : Stmt
+{
+    public Token name;
+    public List<Token> parms;
+    public List<Stmt> body;
+    public Function(Token name, List<Token> parms, List<Stmt> body)
+    {
+        this.name = name;
+        this.parms = parms;
+        this.body = body;
+    }
+
+    public override T Accept<T>(IVisitor<T> visitor)
+    {
+        return visitor.VisitFunctionStmt(this);
+    }
+}
 public class Var : Stmt
 {
     public Token name;
@@ -75,7 +93,7 @@ public class While : Stmt
 {
     public Expr condition;
     public Stmt body;
-    public While(Expr condition,Stmt body)
+    public While(Expr condition, Stmt body)
     {
         this.condition = condition;
         this.body = body;

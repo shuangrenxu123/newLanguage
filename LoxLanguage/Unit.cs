@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LoxLanguage
 {
-    internal class Unit
+    public class Unit
     {
     }
 }

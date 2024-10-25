@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace LoxLanguage
 {
-    internal class Environment
+    public class Environment
     {
         /// <summary>
         /// 外部环境

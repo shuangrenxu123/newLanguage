@@ -11,10 +11,16 @@ namespace LoxLanguage
     /// <summary>
     /// 解释器
     /// </summary>
-    internal class Interpreter : Stmt.IVisitor<Unit>, Expr.IVisitor<Object>
+    public class Interpreter : Stmt.IVisitor<Unit>, Expr.IVisitor<Object>
     {
+        public Environment globals = new Environment();
+        private Environment environment;
 
-        private Environment environment = new();
+        public Interpreter()
+        {
+            environment = globals;
+        }
+        
         public void Interpret(List<Stmt> statements)
         {
             try
@@ -232,7 +238,7 @@ namespace LoxLanguage
             ExecuteBlock(stmt.statements,new Environment(environment));
             return null;
         }
-        private void ExecuteBlock(List<Stmt> statements,Environment environment)
+        public void ExecuteBlock(List<Stmt> statements,Environment environment)
         {
             Environment previous = this.environment;
             try
@@ -287,6 +293,36 @@ namespace LoxLanguage
                 Execute(stmt.body);
             }
             
+            return null;
+        }
+
+        public object VisitCallExpr(Call expr)
+        {
+            object callee = Evaluate(expr.callee);
+            List<object> args = new List<object>();
+            foreach (var i in expr.args)
+            {
+                args.Add(Evaluate(i));
+            }
+            if(callee is not LoxCallable)
+            {
+                throw new Exception("这不是一个可被调用的对象");
+            }
+            LoxCallable function = (LoxCallable)callee;
+            if (args.Count != function.Arity)
+            {
+                throw new RuntimeError(expr.paren,"函数调用的参数对不上");
+            }
+
+            return function.Call(this,args);
+        }
+
+        public Unit VisitFunctionStmt(Function stmt)
+        {
+            LoxFunction function = new(stmt);
+
+            environment.Define(stmt.name.lexeme,function);
+
             return null;
         }
     } 
